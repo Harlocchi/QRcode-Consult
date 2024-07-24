@@ -1,5 +1,3 @@
-import 'package:flutter/painting.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qrcode/screens/Login.dart';
 import 'package:qrcode/transition/aroudRightToLeft.dart';
@@ -45,7 +43,7 @@ class ExpadedCpconLogo extends StatelessWidget {
                   BlendMode.srcIn,
                 ),
                 child: Center(
-                    child: Image.asset('assets/images/LogoCubofix2.png', width: 300,
+                    child: Image.asset('assets/images/logo.png', width: 300,
                     )
             )
             ),

@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
+import 'package:http/http.dart';
 import 'package:qrcode/credentials.dart';
 import 'package:qrcode/screens/WorkSpace.dart';
-import 'package:qrcode/transition/aroudRightToLeft.dart';
 import 'package:qrcode/utilsStyled/Inputs.dart';
 
 class Login extends StatelessWidget {
@@ -42,7 +39,7 @@ class _MainWidgetLoginState extends State<MainWidgetLogin> {
           ),
           child: const InputsWidget(),
         )
-    );;
+    );
   }
 }
 
@@ -54,7 +51,7 @@ class InputsWidget extends StatefulWidget {
 }
 
 credential cred = credential();
-const isLoadingLogin = false;
+bool isLoadingLogin = false;
 final TextEditingController _user = TextEditingController();
 final TextEditingController _password = TextEditingController();
 
@@ -79,11 +76,17 @@ class _InputsWidgetState extends State<InputsWidget> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB (0,100,0,0),
-            child: Image.asset(
-              "assets/images/bgIconCubofix.png",
-              width: 100,
-
+            child:  ColorFiltered(
+              colorFilter: const ColorFilter.mode(
+                Color(0xff03d4ab1),
+                BlendMode.srcIn,
+              ),
+              child: Image.asset(
+                "assets/images/logo.png",
+                width: 200,
+              ),
             ),
+
           ),
 
            const Padding(
@@ -127,6 +130,7 @@ class _InputsWidgetState extends State<InputsWidget> {
                             child: CustomTextFieldDecoration(child:
                             TextField(
                               controller: _password,
+                              obscureText: _obscureText,
                               style: const TextStyle(
                                   color: Color(0xff03d4ab1),
                                   fontFamily: "ProductSansRegular"
@@ -183,21 +187,46 @@ class _InputsWidgetState extends State<InputsWidget> {
                          elevation:10.0,
                      ),
                      onPressed: () async {
-                         String jwt = await cred.getTokenJWT(_user.text, _password.text);
+                        setState(() {
+                          isLoadingLogin = true;
+                        });
+                        try{
+                          Response jwt = await cred.getTokenJWT(_user.text, _password.text);
+                          if(jwt.statusCode < 299){
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(builder: (context) => const Workspace()),
+                                  (Route<dynamic> route) => false,
+                            );
+                          }
+                        }catch(e){
+                          print(e);
+                        }finally{
+                          setState(() {
+                            isLoadingLogin = false;
+                          });
+                        }
 
-
-                         Navigator.pushAndRemoveUntil(
-                           context,
-                           MaterialPageRoute(builder: (context) => const Workspace()),
-                               (Route<dynamic> route) => false,
-                         );
-                     }
-                     child: isLoadingLogin ? ,
-                       style: TextStyle(
-                         fontFamily: "ProductSansBold",
-                         color: Colors.white
+                     }, child: isLoadingLogin ? const
+                   SizedBox(
+                       width: 24,
+                       height: 24,
+                       child: CircularProgressIndicator(
+                         color: Colors.white,
+                         strokeWidth: 2,
                        ),
+                   ) :
+                    const Text(
+                     "vamos lá",
+                     style: TextStyle(
+                         decoration: TextDecoration.underline,
+                         decorationColor: Color(0xff03d4ab1),
+
+                         fontFamily: "ProductSansRegular",
+                         color: Colors.white
                      ),
+                   ),
+                     
 
                   ),
               ]

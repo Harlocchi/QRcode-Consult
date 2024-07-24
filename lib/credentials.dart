@@ -11,7 +11,7 @@ class credential{
 
   credential();
 
-   Future<String> getTokenJWT(user, password) async {
+   Future<http.Response> getTokenJWT(user, password) async {
       var url = Uri.parse(DomainJWT);
 
       var body = jsonEncode({
@@ -27,14 +27,7 @@ class credential{
         url, headers: header, body: body
       );
 
-      if(response.statusCode == 200){
-        var responseJson = jsonDecode(response.body);
-        print(responseJson['token']);
-        return responseJson['token'];
-      }else{
-        print('Erro ao obter token JWT: ${response.statusCode}');
-        return throw Exception('Erro ao obter token JWT: ${response.statusCode}');
-      }
+      return response;
   }
 
 }
